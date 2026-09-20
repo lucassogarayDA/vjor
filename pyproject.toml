@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "HBF"
-version = "3.0.3"
-description = "HBF - Un formato de archivo todo en uno"
+name = "vjor"
+version = "3.0.4"
+description = "Vjor - Un formato de archivo todo en uno"
 readme = "README.md"
 authors = [{name = "Lucas Sogaray"}]
 license = {text = "MIT"}
@@ -25,13 +25,13 @@ dependencies = [
 
 
 [project.urls]
-"Source Code" = "https://github.com/lucassogarayDA/hbf"
-"Documentation" = "https://github.com/lucassogarayDA/hbf#readme"
-"Issue Tracker" = "https://github.com/lucassogarayDA/hbf/issues"
+"Source Code" = "https://github.com/lucassogarayDA/vjor"
+"Documentation" = "https://github.com/lucassogarayDA/vjor#readme"
+"Issue Tracker" = "https://github.com/lucassogarayDA/vjor/issues"
 
 
 [project.scripts]
-HBF = "HBF:main"
+Vjor = "Vjor:main"
 
 [tool.setuptools]
-py-modules = ["HBF"]
+py-modules = ["Vjor"]

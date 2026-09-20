@@ -51,8 +51,8 @@ def main():
     bloques = extraer_bloques_binario(contenido)
     print(f"✅ Encontrados {len(bloques)} bloques [BINARIO]")
 
-    if len(bloques) < 2:
-        print("❌ Se esperaban al menos 2 bloques [BINARIO]")
+    if len(bloques) < 1:
+        print("❌ Se esperaban al menos 1 bloques [BINARIO]")
         # Debug: mostrar todas las cabeceras de bloque del archivo
         print("\n🔍 Cabeceras encontradas:")
         for m in re.finditer(r'^\[([A-Z]+)(?::[^\]]*)?\]', contenido, re.MULTILINE):
@@ -94,9 +94,36 @@ def main():
         estado = "gzip" if comprimido else "crudo"
         print(f"   ✅ {nombre} → {tmp.name} ({len(datos)//1024} KB, {estado})")
 
-    if len(temporales) < 2:
-        print("❌ No se pudieron extraer al menos 2 binarios")
+    if len(temporales) < 1:
+        print("❌ No se pudo extraer al menos 1 binarios")
         sys.exit(1)
+
+# === CASO 1: UN SOLO BINARIO ===
+    if len(temporales) == 1:
+        ruta, nombre, _, _ = temporales[0]
+        os.chmod(ruta, 0o755)
+
+    if nombre.lower().endswith(".wad") or "wad" in nombre.lower():
+        print(f"\n⚠️  Solo hay un WAD, no hay motor que ejecutar.")
+        print(f"   WAD extraído en: {ruta}")
+        print(f"   Usalo con: doomgeneric -iwad {ruta}")
+        sys.exit(0)
+
+    print(f"\n🎮 Ejecutando {nombre}...")
+    try:
+        subprocess.run([ruta], check=True)
+    except KeyboardInterrupt:
+        print("\n👋 Saliendo...")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+    finally:
+        for r, _, _, _ in temporales:
+            try:
+                os.unlink(r)
+            except Exception:
+                pass
+    sys.exit(0)
+
 
     # 3. Identificar motor y WAD
     motor = None

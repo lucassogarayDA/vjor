@@ -1,0 +1,2 @@
+[console_scripts]
+HBF = HBF:main

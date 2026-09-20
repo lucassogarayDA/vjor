@@ -1,9 +1,9 @@
 control:
-    Package: hbf
-    Version: 3.0.3
+    Package: Vjor
+    Version: 3.0.4
     Architecture: all
     Maintainer: Lucas Sogaray
     Depends: python
     Description: |-
-        Hybrid Binary Format - Un formato de archivo todo en uno
+        Vjor - Un formato de archivo todo en uno
         Crea archivos que combinan texto, binario, metadatos, bloques especializados, 12 idiomas y importacion e exportacion a 9 formatos.

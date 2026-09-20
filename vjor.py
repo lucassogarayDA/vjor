@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# hbf.py - Hybrid Binary Format v3.0.3
+# vjor.py - Hybrid Binary Format v3.0.3
 import json
 import re
 import base64
@@ -14,7 +14,7 @@ import gzip
 import io
 import shutil
 
-VERSION = "3.0.3"
+VERSION = "3.0.4"
 
 # ====================
 # DETECCIÓN DE SISTEMA OPERATIVO
@@ -33,7 +33,7 @@ else:
 # CONFIGURACIÓN
 # ====================
 
-CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".hbf_config.json")
+CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".vjor_config.json")
 
 def cargar_config():
     if os.path.exists(CONFIG_FILE):
@@ -77,14 +77,14 @@ else:
 # SISTEMA DE TRADUCCIÓN CON JSON EXTERNO
 # ====================
 
-class HBFTranslator:
+class VJORTranslator:
     def __init__(self):
         self.idiomas = {}
         self.idioma_actual = config.get("idioma", "es")
         self.cargar_idiomas()
 
     def cargar_idiomas(self):
-        locales_dir = Path(__file__).parent / "locales"
+        locales_dir = Path(os.path.realpath(__file__)).parent / "locales"
         if not locales_dir.exists():
             locales_dir.mkdir(exist_ok=True)
             self.crear_idiomas_por_defecto(locales_dir)
@@ -101,7 +101,7 @@ class HBFTranslator:
             self.crear_idiomas_por_defecto(locales_dir)
 
     def crear_idiomas_por_defecto(self, directorio):
-        """Crea TODOS los idiomas disponibles al iniciar HBF por primera vez"""
+        """Crea TODOS los idiomas disponibles al iniciar VJOR por primera vez"""
         idiomas = self.obtener_todos_los_idiomas()
         for codigo, traducciones in idiomas.items():
             with open(directorio / f"{codigo}.json", 'w', encoding='utf-8') as f:
@@ -113,8 +113,8 @@ class HBFTranslator:
         # de emergencia si esa carpeta falta o está vacía/corrupta, para
         # no crashear con un traceback feo en instalaciones rotas.
         return {
-            "es": {"nombre_idioma": "Español", "titulo": "HBF"},
-            "en": {"nombre_idioma": "English", "titulo": "HBF"},
+            "es": {"nombre_idioma": "Español", "titulo": "VJOR"},
+            "en": {"nombre_idioma": "English", "titulo": "VJOR"},
         }
 
 
@@ -167,7 +167,7 @@ class HBFTranslator:
 
 
 # Instancia global del traductor
-T = HBFTranslator()
+T = VJORTranslator()
 
 # ====================
 # FUNCIONES BÁSICAS
@@ -215,14 +215,14 @@ def obtener_ruta_busqueda():
         return config["ruta_base"]
     return RUTA_DESCARGAS
 
-def listar_hbf():
+def listar_vjor():
     ruta = obtener_ruta_busqueda()
     try:
-        archivos = [f for f in os.listdir(ruta) if f.endswith(".hbf")]
+        archivos = [f for f in os.listdir(ruta) if f.endswith(".vjrq")]
     except:
         archivos = []
     if not archivos:
-        info(f"No hay archivos .hbf en {ruta}")
+        info(f"No hay archivos .vjrq en {ruta}")
         return []
     print(f"\n   📂  Archivos en {ruta} ({len(archivos)}):")
     for i, arch in enumerate(archivos, 1):
@@ -242,7 +242,7 @@ def parsear_atributos(bloque):
 
 
 def obtener_bloques(contenido):
-    """Parsea el contenido de un .hbf y devuelve {NOMBRE_BLOQUE: [{'contenido': str, 'atributos': dict}, ...]}"""
+    """Parsea el contenido de un .vjrq y devuelve {NOMBRE_BLOQUE: [{'contenido': str, 'atributos': dict}, ...]}"""
     encontrados = re.findall(
         r'\[([A-Z]+)(:[^\]]*)?\]\n(.*?)(?=\n\[[A-Z]+(?::[^\]]*)?\]|\n\[FIN\]|\Z)',
         contenido, re.DOTALL
@@ -544,10 +544,10 @@ def editar_dependencias():
 # ====================
 
 def agregar_imagen():
-    """Agrega una imagen al archivo HBF con metadatos completos"""
+    """Agrega una imagen al archivo VJOR con metadatos completos"""
     print("\n   🖼️  AGREGAR IMAGEN\n")
     
-    archivo = input_con_salida("   📄  Archivo HBF destino: ")
+    archivo = input_con_salida("   📄  Archivo VJOR destino: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -661,10 +661,10 @@ data: {datos_b64}
         error(f"Error al agregar imagen: {e}")
 
 def extraer_imagen():
-    """Extrae una imagen del archivo HBF"""
+    """Extrae una imagen del archivo VJOR"""
     print("\n   📤  EXTRAER IMAGEN\n")
     
-    archivo = input_con_salida("   📄  Archivo HBF origen: ")
+    archivo = input_con_salida("   📄  Archivo VJOR origen: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -742,10 +742,10 @@ def extraer_imagen():
         error(f"Error: {e}")
 
 def listar_imagenes():
-    """Lista todas las imágenes en un archivo HBF con detalles"""
+    """Lista todas las imágenes en un archivo VJOR con detalles"""
     print("\n   📋  LISTAR IMÁGENES\n")
     
-    archivo = input_con_salida("   📄  Archivo HBF: ")
+    archivo = input_con_salida("   📄  Archivo VJOR: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -805,7 +805,7 @@ def info_imagen():
     """Muestra información detallada de una imagen específica"""
     print("\n   📊  INFORMACIÓN DE IMAGEN\n")
     
-    archivo = input_con_salida("   📄  Archivo HBF: ")
+    archivo = input_con_salida("   📄  Archivo VJOR: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -982,7 +982,7 @@ def buscar_avanzado():
 # ====================
 
 def estadisticas_avanzadas():
-    """Estadísticas detalladas del archivo HBF"""
+    """Estadísticas detalladas del archivo VJOR"""
     print("\n   📊  ESTADÍSTICAS AVANZADAS\n")
     
     archivo = input_con_salida("   📄  Archivo: ")
@@ -1124,19 +1124,19 @@ def agregar_historial(archivo, mensaje):
         f.write(nuevo_contenido)
 
 # ====================
-# API DE BIBLIOTECA (import hbf)
+# API DE BIBLIOTECA (import vjor)
 # ====================
 # Todo lo de acá abajo está pensado para usarse desde código, sin pasar
 # por el menú interactivo. Ejemplo:
 #
-#     import hbf
-#     doc = hbf.Doc("nota.hbf")
+#     import vjor
+#     doc = vjor.Doc("nota.vjrq")
 #     doc.texto = "contenido nuevo"
 #     doc.agregar_bloque("CODE", "print(1)", language="python")
 #     doc.guardar()
 #     doc.exportar("json")
 #
-#     nuevo = hbf.crear("otra.hbf", titulo="Mi nota", autor="Lucas")
+#     nuevo = vjor.crear("otra.vjrq", titulo="Mi nota", autor="Lucas")
 
 class BloqueNoEncontrado(Exception):
     """Se pidió un bloque que el archivo no tiene."""
@@ -1189,7 +1189,7 @@ def _eliminar_bloque_por_indice(contenido, nombre, indice):
 
 
 class Doc:
-    """Representa un archivo .hbf abierto en memoria."""
+    """Representa un archivo .vjrq abierto en memoria."""
 
     _SIMPLES = {"texto": "TEXTO", "listas": "LISTAS", "notas": "NOTAS", "titulos": "TITULOS"}
     _SIMPLES_JSON = {"metadatos": "METADATOS", "numerico": "NUMERICO"}
@@ -1371,15 +1371,15 @@ class Doc:
 
 
 def crear(ruta, titulo="Sin título", autor=""):
-    """Crea un archivo .hbf nuevo desde código y devuelve un Doc ya
+    """Crea un archivo .vjrq nuevo desde código y devuelve un Doc ya
     abierto sobre él, sin pasar por el menú interactivo."""
     ruta = obtener_ruta(ruta)
-    if not ruta.endswith(".hbf"):
-        ruta += ".hbf"
+    if not ruta.endswith(".vjrq"):
+        ruta += ".vjrq"
     with open(ruta, 'w', encoding='utf-8') as f:
-        f.write("[HBF]\n")
+        f.write("[VJOR]\n")
         f.write(f"Version: {VERSION}\n")
-        f.write("Magic: HBF\n")
+        f.write("Magic: VJOR\n")
         f.write(f"Fecha: {datetime.now().isoformat()}\n\n")
         f.write("[METADATOS]\n")
         metadatos = {"titulo": titulo, "autor": autor, "creado": datetime.now().isoformat()}
@@ -1392,13 +1392,13 @@ def crear(ruta, titulo="Sin título", autor=""):
 # FUNCIONES EXISTENTES MEJORADAS
 # ====================
 
-def crear_hbf():
-    print("\n   📝  CREAR HBF\n")
+def crear_vjor():
+    print("\n   📝  CREAR VJOR\n")
     nombre = input_con_salida("   📄  Nombre del archivo: ")
     if nombre is None:
         return
-    if not nombre.endswith(".hbf"):
-        nombre += ".hbf"
+    if not nombre.endswith(".vjrq"):
+        nombre += ".vjrq"
     archivo = obtener_ruta(nombre)
     titulo = input_con_salida("   🏷️  Título: ") or "Sin título"
     if titulo is None:
@@ -1408,9 +1408,9 @@ def crear_hbf():
         return
     
     with open(archivo, 'w', encoding='utf-8') as f:
-        f.write("[HBF]\n")
+        f.write("[VJOR]\n")
         f.write(f"Version: {VERSION}\n")
-        f.write("Magic: HBF\n")
+        f.write("Magic: VJOR\n")
         f.write(f"Fecha: {datetime.now().isoformat()}\n\n")
         
         f.write("[METADATOS]\n")
@@ -1433,8 +1433,8 @@ def crear_hbf():
     
     exito(f"Archivo creado: {archivo}")
 
-def leer_hbf():
-    print("\n   📖  LEER HBF\n")
+def leer_vjor():
+    print("\n   📖  LEER VJOR\n")
     nombre = input_con_salida("   📄  Nombre del archivo: ")
     if nombre is None:
         return
@@ -1634,12 +1634,12 @@ def guardar_binario():
     if not os.path.exists(origen):
         error("El archivo no existe")
         return
-    destino = input_con_salida("   📁  Nombre del archivo HBF destino: ")
+    destino = input_con_salida("   📁  Nombre del archivo VJOR destino: ")
     if destino is None:
         return
     destino = obtener_ruta(destino)
-    if not destino.endswith(".hbf"):
-        destino += ".hbf"
+    if not destino.endswith(".vjrq"):
+        destino += ".vjrq"
     
     with open(origen, 'rb') as f:
         datos = f.read()
@@ -1662,7 +1662,7 @@ def guardar_binario():
 
 def extraer_binario():
     print("\n   📤  EXTRAER BINARIO\n")
-    origen = input_con_salida("   📁  Archivo HBF origen: ")
+    origen = input_con_salida("   📁  Archivo VJOR origen: ")
     if origen is None:
         return
     origen = obtener_ruta(origen)
@@ -1704,7 +1704,7 @@ FORMATOS_EXPORTACION = {
 }
 
 def generar_exportacion(contenido, nombre_base, formato):
-    """Función pura: recibe el contenido crudo de un .hbf y devuelve
+    """Función pura: recibe el contenido crudo de un .vjrq y devuelve
     (extension, texto_generado) para el formato pedido. No toca disco,
     no imprime nada — la usan tanto el menú interactivo como la API.
     'formato' puede ser el número de opción ("1".."9") o el nombre
@@ -1746,13 +1746,13 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "md", md
 
     elif formato == "xml":
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n<hbf>\n'
+        xml = '<?xml version="1.0" encoding="UTF-8"?>\n<vjor>\n'
         for nombre, valor in bloques:
             xml += f'  <{nombre.lower()}>\n'
             valor_escapado = valor.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
             xml += f'    <![CDATA[{valor_escapado}]]>\n'
             xml += f'  </{nombre.lower()}>\n'
-        xml += "</hbf>"
+        xml += "</vjor>"
         return "xml", xml
 
     elif formato == "csv":
@@ -1853,9 +1853,9 @@ def generar_exportacion(contenido, nombre_base, formato):
         raise ValueError(f"Formato de exportación no reconocido: {formato}")
 
 
-def exportar_hbf():
+def exportar_vjor():
     print("\n   📤  EXPORTAR\n")
-    archivo = input_con_salida("   📄  Archivo HBF: ")
+    archivo = input_con_salida("   📄  Archivo VJOR: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -1897,9 +1897,9 @@ def exportar_hbf():
 
 
 
-def importar_a_hbf():
-    """Importa archivos de otros formatos a HBF con auto-detección"""
-    print("\n   📥  IMPORTAR A HBF\n")
+def importar_a_vjor():
+    """Importa archivos de otros formatos a VJOR con auto-detección"""
+    print("\n   📥  IMPORTAR A VJOR\n")
     
     archivo_origen = input_con_salida("   📄  Ruta del archivo a importar: ")
     if archivo_origen is None:
@@ -1940,11 +1940,11 @@ def importar_a_hbf():
     if not formato and formato_detectado:
         formato = formato_detectado
     
-    nombre_destino = input_con_salida("   📄  Nombre del archivo HBF destino: ")
+    nombre_destino = input_con_salida("   📄  Nombre del archivo VJOR destino: ")
     if nombre_destino is None:
         return
-    if not nombre_destino.endswith(".hbf"):
-        nombre_destino += ".hbf"
+    if not nombre_destino.endswith(".vjrq"):
+        nombre_destino += ".vjrq"
     archivo_destino = obtener_ruta(nombre_destino)
     
     try:
@@ -1954,83 +1954,83 @@ def importar_a_hbf():
         error("No se pudo leer el archivo")
         return
     
-    # Generar contenido HBF
-    hbf_content = []
-    hbf_content.append("[HBF]")
-    hbf_content.append(f"Version: {VERSION}")
-    hbf_content.append("Magic: HBF")
-    hbf_content.append(f"Fecha: {datetime.now().isoformat()}")
-    hbf_content.append("")
+    # Generar contenido VJOR
+    vjor_content = []
+    vjor_content.append("[VJOR]")
+    vjor_content.append(f"Version: {VERSION}")
+    vjor_content.append("Magic: VJOR")
+    vjor_content.append(f"Fecha: {datetime.now().isoformat()}")
+    vjor_content.append("")
     
-    hbf_content.append("[METADATOS]")
+    vjor_content.append("[METADATOS]")
     metadatos = {
         "titulo": os.path.splitext(os.path.basename(archivo_origen))[0],
         "autor": "Importado automáticamente",
         "formato_original": formato,
         "fecha_importacion": datetime.now().isoformat()
     }
-    hbf_content.append(json.dumps(metadatos, indent=2))
-    hbf_content.append("")
+    vjor_content.append(json.dumps(metadatos, indent=2))
+    vjor_content.append("")
     
     # Procesar según el formato
     if formato == "1":  # TXT
-        hbf_content.append("[TEXTO]")
-        hbf_content.append(contenido.strip())
+        vjor_content.append("[TEXTO]")
+        vjor_content.append(contenido.strip())
         
     elif formato == "2":  # JSON
         try:
             datos = json.loads(contenido)
-            hbf_content.append("[TEXTO]")
-            hbf_content.append(json.dumps(datos, indent=2))
+            vjor_content.append("[TEXTO]")
+            vjor_content.append(json.dumps(datos, indent=2))
         except:
             error("JSON inválido")
             return
             
     elif formato == "3":  # XML
-        hbf_content.append("[TEXTO]")
+        vjor_content.append("[TEXTO]")
         texto_limpio = re.sub(r'<[^>]+>', '', contenido)
         texto_limpio = re.sub(r'\n\s*\n', '\n\n', texto_limpio)
-        hbf_content.append(texto_limpio.strip())
+        vjor_content.append(texto_limpio.strip())
         
     elif formato in ["4"]:  # YAML
-        hbf_content.append("[TEXTO]")
-        hbf_content.append(contenido.strip())
+        vjor_content.append("[TEXTO]")
+        vjor_content.append(contenido.strip())
         
     elif formato in ["5"]:  # TOML
-        hbf_content.append("[TEXTO]")
-        hbf_content.append(contenido.strip())
+        vjor_content.append("[TEXTO]")
+        vjor_content.append(contenido.strip())
         
     elif formato in ["6"]:  # INI
-        hbf_content.append("[TEXTO]")
-        hbf_content.append(contenido.strip())
+        vjor_content.append("[TEXTO]")
+        vjor_content.append(contenido.strip())
         
     elif formato in ["7"]:  # CSV
-        hbf_content.append("[LISTAS]")
+        vjor_content.append("[LISTAS]")
         lineas = contenido.strip().split('\n')
         for linea in lineas:
             if linea.strip():
-                hbf_content.append(f"- {linea.strip()}")
+                vjor_content.append(f"- {linea.strip()}")
         
     elif formato in ["8"]:  # MD
-        hbf_content.append("[TEXTO]")
+        vjor_content.append("[TEXTO]")
         texto_limpio = re.sub(r'^#+\s+', '', contenido, flags=re.MULTILINE)
         texto_limpio = re.sub(r'[*_]{1,2}([^*_]+)[*_]{1,2}', r'\1', texto_limpio)
-        hbf_content.append(texto_limpio.strip())
+        vjor_content.append(texto_limpio.strip())
         
     elif formato in ["9"]:  # HTML
-        hbf_content.append("[TEXTO]")
+        vjor_content.append("[TEXTO]")
         texto_limpio = re.sub(r'<[^>]+>', '', contenido)
         texto_limpio = re.sub(r'\n\s*\n', '\n\n', texto_limpio)
-        hbf_content.append(texto_limpio.strip())
+        vjor_content.append(texto_limpio.strip())
     
 
 # ====================
 # FUNCIONES RESTANTES
 # ====================
 
-def listar_hbf_menu():
-    print("\n   📂  LISTAR HBF\n")
-    listar_hbf()
+def listar_vjor_menu():
+    print("\n   📂  LISTAR VJOR\n")
+    listar_vjor()
 
 def cambiar_ruta_base():
     print("\n   📁  CAMBIAR RUTA BASE\n")
@@ -2084,7 +2084,7 @@ def cambiar_colores():
     if color_elegido:
         config["color"] = color_elegido
         guardar_config(config)
-        exito(f"Color cambiado a {color_elegido}. Reiniciá HBF para ver los cambios.")
+        exito(f"Color cambiado a {color_elegido}. Reiniciá VJOR para ver los cambios.")
     else:
         error("Opción no válida")
 
@@ -2093,9 +2093,9 @@ def cambiar_idioma():
     T.elegir_idioma()
     exito(f"Idioma cambiado a {T.idioma_actual.upper()}")
 
-def combinar_hbf():
-    print("\n   🔗  COMBINAR HBF\n")
-    archivos = listar_hbf()
+def combinar_vjor():
+    print("\n   🔗  COMBINAR VJOR\n")
+    archivos = listar_vjor()
     if not archivos:
         return
     print("\n   📄  Primer archivo:")
@@ -2134,10 +2134,10 @@ def combinar_hbf():
         contenido2 = f.read()
     bloques1 = re.findall(r'(\[[A-Z]+(?::[^\]]*)?\]\n.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido1, re.DOTALL)
     bloques2 = re.findall(r'(\[[A-Z]+(?::[^\]]*)?\]\n.*?)(?=\n\[[A-Z]+(?::[^\]]+)?\]|\n\[FIN\]|$)', contenido2, re.DOTALL)
-    # Los marcadores [HBF] (cabecera) y [FIN] (cierre) no son bloques de contenido:
+    # Los marcadores [VJOR] (cabecera) y [FIN] (cierre) no son bloques de contenido:
     # se recrean una sola vez al combinar, así que se excluyen para no duplicarlos.
-    bloques1 = [b for b in bloques1 if not b.startswith('[HBF]') and not b.startswith('[FIN]')]
-    bloques2 = [b for b in bloques2 if not b.startswith('[HBF]') and not b.startswith('[FIN]')]
+    bloques1 = [b for b in bloques1 if not b.startswith('[VJOR]') and not b.startswith('[FIN]')]
+    bloques2 = [b for b in bloques2 if not b.startswith('[VJOR]') and not b.startswith('[FIN]')]
     if orden == "1":
         combinado = "\n".join(bloques1) + "\n" + "\n".join(bloques2)
     else:
@@ -2145,17 +2145,17 @@ def combinar_hbf():
     nombre_salida = input_con_salida("\n   📄  Nombre nuevo archivo: ")
     if nombre_salida is None:
         return
-    if not nombre_salida.endswith(".hbf"):
-        nombre_salida += ".hbf"
+    if not nombre_salida.endswith(".vjrq"):
+        nombre_salida += ".vjrq"
     salida = obtener_ruta(nombre_salida)
-    cabecera = f"[HBF]\nVersion: {VERSION}\nMagic: HBF\nFecha: {datetime.now().isoformat()}\n\n"
+    cabecera = f"[VJOR]\nVersion: {VERSION}\nMagic: VJOR\nFecha: {datetime.now().isoformat()}\n\n"
     with open(salida, 'w', encoding='utf-8') as f:
         f.write(cabecera + combinado + "\n[FIN]\n")
     exito(f"Archivo combinado: {salida}")
 
-def proteger_hbf():
+def proteger_vjor():
     print("\n   🔒  PROTEGER CON CLAVE\n")
-    archivos = listar_hbf()
+    archivos = listar_vjor()
     if not archivos:
         return
     print("\n   📄  Elegí el archivo:")
@@ -2227,11 +2227,11 @@ def proteger_hbf():
     else:
         error("Opción no válida")
 
-def generar_desde_hbf():
-    """Genera archivos reales desde un archivo HBF"""
-    print("\n   📦  GENERAR DESDE HBF\n")
+def generar_desde_vjor():
+    """Genera archivos reales desde un archivo VJOR"""
+    print("\n   📦  GENERAR DESDE VJOR\n")
     
-    archivo = input_con_salida("   📄  Archivo HBF: ")
+    archivo = input_con_salida("   📄  Archivo VJOR: ")
     if archivo is None:
         return
     archivo = obtener_ruta(archivo)
@@ -2370,7 +2370,7 @@ def generar_desde_hbf():
 def mostrar_menu():
     limpiar()
     print(f"\n    {C['titulo']}╭─────────────╮{C['reset']}")
-    print(f"    {C['titulo']}│ [▬▬▬▬▬▬▬▬] │{C['reset']}  {C['titulo']}HBF{C['reset']}")
+    print(f"    {C['titulo']}│ [▬▬▬▬▬▬▬▬] │{C['reset']}  {C['titulo']}VJOR{C['reset']}")
     print(f"    {C['titulo']}╰─────────────╯{C['reset']}")
     print(f"    {C['info']}{T.get('titulo')}{C['reset']}")
     print(f"    {C['info']}{T.get('creado_por')}{C['reset']}\n")
@@ -2393,11 +2393,11 @@ def main():
         
         # Opciones del menú (37 opciones)
         if opcion == "1":
-            crear_hbf()
+            crear_vjor()
         elif opcion == "2":
-            leer_hbf()
+            leer_vjor()
         elif opcion == "3":
-            importar_a_hbf()
+            importar_a_vjor()
         elif opcion == "4":
             editar_texto()
         elif opcion == "5":
@@ -2441,21 +2441,21 @@ def main():
         elif opcion == "24":
             extraer_binario()
         elif opcion == "25":
-            exportar_hbf()
+            exportar_vjor()
         elif opcion == "26":
             buscar_avanzado()
         elif opcion == "27":
-            listar_hbf_menu()
+            listar_vjor_menu()
         elif opcion == "28":
             estadisticas_avanzadas()
         elif opcion == "29":
             ver_historial()
         elif opcion == "30":
-            combinar_hbf()
+            combinar_vjor()
         elif opcion == "31":
-            proteger_hbf()
+            proteger_vjor()
         elif opcion == "32":
-            generar_desde_hbf()
+            generar_desde_vjor()
         elif opcion == "33":
             cambiar_ruta_base()
         elif opcion == "34":
