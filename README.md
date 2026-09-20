@@ -1,6 +1,6 @@
-📁 HBF - Hybrid Binary Format
+📁 Vjor - Antes HBF.
 
-**HBF** es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y datos numéricos en un solo archivo. Creado desde Termux, diseñado para ser simple, útil y portable.
+**Vjor** es un formato de archivo todo en uno que combina texto, binario, metadatos, listas y datos numéricos en un solo archivo. Creado desde Termux, diseñado para ser simple, útil y portable.
 
 ---
 
@@ -20,12 +20,12 @@
 | 📤 **Exportar** | Exporta a TXT, JSON, MD, XML, CSV, YAML, HTML, INI o TOML |
 | 📥 **Importar** | Importa desde TXT, JSON, XML, YAML, TOML, INI, CSV, MD o HTML |
 | 🔍 **Buscar** | Busca palabras dentro del archivo |
-| 📂 **Listar** | Muestra todos los HBF en la carpeta |
+| 📂 **Listar** | Muestra todos los Vjor en la carpeta |
 | 💾 **Configurable** | Guarda colores, ruta base e idioma en un archivo de configuración |
 | 🖥️ **Multiplataforma** | Funciona en Termux (Android), Linux y Windows |
 | 🗄️ **Bloque SQL** | Edita y exporta a SQLite |
 | 🎨 **10 colores** | Personalizá el TUI con 10 colores diferentes |
-| 🔌 **API** | Usá HBF como biblioteca desde Python |
+| 🔌 **API** | Usá Vjor como biblioteca desde Python |
 
 ---
 
@@ -34,19 +34,21 @@
 ### Opción 1: Desde PyPI (recomendado)
 
 ```bash
-pip install hbf-hyper
-hbf
+pip install vjor
+vjor
 ```
 
 Opción 2: Desde el código fuente
 
 ```bash
-git clone https://github.com/lucassogarayDA/hbf.git
-cd hbf
-python hbf.py
+git clone https://github.com/lucassogarayDA/vjor.git
+cd vjor
+python vjor.py
 ```
 
 Opción 3: Desde el paquete .deb (Termux/Linux)
+
+#Desactualizados, no recomendado.
 
 ```bash
 dpkg -i hbf_3.0.3_all.deb
@@ -60,7 +62,7 @@ hbf
 Ejecutá el comando y seguí el menú interactivo:
 
 ```bash
-hbf
+vjor
 ```
 
 Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas disponibles.
@@ -70,8 +72,8 @@ Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas
 📋 Menú completo (36 opciones)
 
 ```
-  1.  📝 Crear HBF
-  2.  📖 Leer HBF
+  1.  📝 Crear VJOR
+  2.  📖 Leer VJOR
   3.  📥 Importar a HBF
   4.  ✏️ Editar TEXTO
   5.  📋 Editar LISTAS
@@ -96,12 +98,12 @@ Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas
  24.  📤 Extraer binario
  25.  📤 Exportar
  26.  🔍 Buscar
- 27.  📂 Listar HBF
+ 27.  📂 Listar VJOR
  28.  📊 Estadísticas
  29.  📜 Historial
- 30.  🔗 Combinar HBF
+ 30.  🔗 Combinar VJOR
  31.  🔒 Proteger con clave
- 32.  📦 Generar desde HBF
+ 32.  📦 Generar desde VJOR
  33.  📁 Cambiar ruta base
  34.  🎨 Colores
  35.  🌍 Cambiar idioma
@@ -111,12 +113,12 @@ Al abrir, podés elegir idioma o usar la detección automática entre 12 idiomas
 
 ---
 
-📂 Ejemplo de archivo HBF
+📂 Ejemplo de archivo vjor
 
 ```
-[HBF]
+[VJOR]
 Version: 3.0.3
-Magic: HBF
+Magic: VJOR
 Fecha: 2026-09-05T00:00:00
 
 [METADATOS]
@@ -138,15 +140,15 @@ Este es el contenido principal del archivo.
 
 ---
 
-🔌 API de HBF (para desarrolladores)
+🔌 API de vjor (para desarrolladores)
 
-HBF puede usarse como biblioteca de Python además de como herramienta de terminal.
+vjor puede usarse como biblioteca de Python además de como herramienta de terminal.
 
 📦 Funciones principales
 
 Función Descripción
-hbf.crear("archivo.hbf", titulo="...", autor="...") Crea un archivo HBF nuevo y devuelve un objeto Doc
-hbf.Doc("archivo.hbf") Abre un archivo HBF existente para leerlo y modificarlo
+vjor.crear("archivo.vjr", titulo="...", autor="...") Crea un archivo vjor nuevo y devuelve un objeto Doc
+vjor.Doc("archivo.vjr") Abre un archivo Vjor existente para leerlo y modificarlo
 
 📝 Propiedades del objeto Doc
 
@@ -172,9 +174,9 @@ doc.guardar() Guarda todos los cambios en el archivo
 📦 Ejemplo
 
 ```python
-import hbf
+import vjor
 
-doc = hbf.crear("proyecto.hbf", titulo="Mi proyecto", autor="Lucas")
+doc = vjor.crear("proyecto.vjr", titulo="Mi proyecto", autor="Lucas")
 doc.texto = "Contenido principal"
 doc.agregar_bloque("CODE", "print('Hola')", language="python")
 doc.agregar_imagen("diagrama.png", nombre="diagrama")
@@ -187,11 +189,11 @@ doc.exportar("json")
 🔒 Proteger con contraseña
 
 ```bash
-hbf
+vjor
 Opción 31 → Elegir archivo → Opción 1 (Cifrar) → Ingresar contraseña
 ```
 
-El archivo cifrado se guarda con extensión .hbf.enc
+El archivo cifrado se guarda con extensión .vjor.enc
 
 ---
 
@@ -216,7 +218,7 @@ El archivo cifrado se guarda con extensión .hbf.enc
 ☑ Compresión activable desde TUI
 ☑ 10 colores para el TUI
 ☑ API para desarrolladores
-
+☑ Renombrado a vjor
 ---
 
 ## 🎮 Doom en HBF
@@ -228,7 +230,7 @@ El archivo `Doom.hbf` contiene el binario del juego dentro del bloque `[BINARIO]
 ```bash
 python hbf-run.py Doom.hbf
 
-
+#Los archivos hbf-run.py y Doom.hbf seguiran funcionando aunque ahora sea vjor
 
 ---
 
@@ -247,6 +249,6 @@ Lucas Sogaray
 
 ---
 
-⭐ ¿Te gusta HBF?
+⭐ ¿Te gusta vjor?
 
 Si te gusta el proyecto, dejale una estrella en GitHub ⭐ y compartilo con otros.
