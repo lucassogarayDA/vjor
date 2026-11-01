@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # vjor.py - Hybrid Binary Format v3.0.6
 import json
+import csv
 import html
 import re
 import base64
@@ -1778,14 +1779,15 @@ def generar_exportacion(contenido, nombre_base, formato):
             elemento = ET.SubElement(raiz, nombre.lower())
             elemento.text = valor.strip()
         xml = ET.tostring(raiz, encoding="utf-8", xml_declaration=True).decode("utf-8")
-        return "xml", xml
-
-    elif formato == "csv":
-        csv = "BLOQUE,CONTENIDO\n"
+        return "    elif formato == "csv":
+        salida_csv = io.StringIO(newline="")
+        escritor = csv.writer(salida_csv)
+        escritor.writerow(["BLOQUE", "CONTENIDO"])
         for nombre, valor in bloques:
-            valor_escapado = valor.strip().replace('"', '""')
-            csv += f'{nombre},"{valor_escapado}"\n'
-        return "csv", csv
+            escritor.writerow([nombre, valor.strip()])
+        return "csv", salida_csv.getvalue()
+
+csv", csv
 
     elif formato == "yaml":
         datos_yaml = []
