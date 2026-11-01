@@ -2094,11 +2094,10 @@ def importar_a_vjor():
         # Preservar títulos, enlaces, listas, énfasis y bloques de código Markdown.
         vjor_content.append(contenido.rstrip("\r\n"))
         
-    elif formato in ["9"]:  # HTML
+    elif formato == "9":  # HTML
         vjor_content.append("[TEXTO]")
-        texto_limpio = re.sub(r'<[^>]+>', '', contenido)
-        texto_limpio = re.sub(r'\n\s*\n', '\n\n', texto_limpio)
-        vjor_content.append(texto_limpio.strip())
+        # Conservar etiquetas, atributos, entidades y estructura del HTML original.
+        vjor_content.append(contenido.rstrip("\r\n"))
     
 
     # No sobrescribir un archivo existente por accidente.
