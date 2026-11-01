@@ -320,9 +320,8 @@ def editar_bloque_especializado(archivo, bloque, atributos_extra=None):
     lineas = []
     while True:
         linea = input("   > ")
-        if linea.lower() in ["salir", "exit", "sair"]:
-            info(T.get('cancelar'))
-            return
+        if linea.strip().lower() in ["salir", "exit", "sair"]:
+            break
         if linea == "":
             break
         lineas.append(linea)
@@ -1541,9 +1540,8 @@ def editar_bloque_general(archivo, bloque):
     lineas = []
     while True:
         linea = input("   > ")
-        if linea.lower() in ["salir", "exit", "sair"]:
-            info(T.get('cancelar'))
-            return
+        if linea.strip().lower() in ["salir", "exit", "sair"]:
+            break
         if linea == "":
             break
         lineas.append(linea)
