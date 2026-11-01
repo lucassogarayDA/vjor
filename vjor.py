@@ -2089,11 +2089,10 @@ def importar_a_vjor():
             error(f"CSV inválido: {e}")
             return
         
-    elif formato in ["8"]:  # MD
+    elif formato == "8":  # MD
         vjor_content.append("[TEXTO]")
-        texto_limpio = re.sub(r'^#+\s+', '', contenido, flags=re.MULTILINE)
-        texto_limpio = re.sub(r'[*_]{1,2}([^*_]+)[*_]{1,2}', r'\1', texto_limpio)
-        vjor_content.append(texto_limpio.strip())
+        # Preservar títulos, enlaces, listas, énfasis y bloques de código Markdown.
+        vjor_content.append(contenido.rstrip("\r\n"))
         
     elif formato in ["9"]:  # HTML
         vjor_content.append("[TEXTO]")
