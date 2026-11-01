@@ -2073,12 +2073,14 @@ def importar_a_vjor():
         vjor_content.append("[TEXTO]")
         vjor_content.append(contenido.strip())
         
-    elif formato in ["7"]:  # CSV
-        vjor_content.append("[LISTAS]")
-        lineas = contenido.strip().split('\n')
-        for linea in lineas:
-            if linea.strip():
-                vjor_content.append(f"- {linea.strip()}")
+    elif formato == "7":  # CSV
+        try:
+            filas_csv = list(csv.reader(io.StringIO(contenido, newline="")))
+            vjor_content.append("[LISTAS]")
+            vjor_content.append(json.dumps(filas_csv, ensure_ascii=False, indent=2))
+        except csv.Error as e:
+            error(f"CSV inválido: {e}")
+            return
         
     elif formato in ["8"]:  # MD
         vjor_content.append("[TEXTO]")
