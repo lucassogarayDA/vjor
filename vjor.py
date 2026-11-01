@@ -13,6 +13,7 @@ import hashlib
 import gzip
 import io
 import shutil
+import sysconfig
 
 VERSION = "3.0.4"
 
@@ -84,21 +85,40 @@ class VJORTranslator:
         self.cargar_idiomas()
 
     def cargar_idiomas(self):
-        locales_dir = Path(os.path.realpath(__file__)).parent / "locales"
-        if not locales_dir.exists():
-            locales_dir.mkdir(exist_ok=True)
+        locales_fuente = Path(__file__).resolve().parent / "locales"
+        locales_instalados = (
+            Path(sysconfig.get_path("data")) / "share" / "vjor" / "locales"
+        )
+        locales_usuario = (
+            Path.home() / ".local" / "share" / "vjor" / "locales"
+        )
+
+        # En el repositorio se usan los JSON locales; en PyPI se instalan
+        # bajo share/vjor/locales para no depender de archivos externos al wheel.
+        candidatos = (locales_fuente, locales_instalados, locales_usuario)
+        locales_dir = next(
+            (ruta for ruta in candidatos
+             if ruta.is_dir() and any(ruta.glob("*.json"))),
+            locales_usuario,
+        )
+
+        if not locales_dir.exists() or not any(locales_dir.glob("*.json")):
+            locales_dir.mkdir(parents=True, exist_ok=True)
             self.crear_idiomas_por_defecto(locales_dir)
             print("✅ Idiomas instalados")
+
         for archivo in locales_dir.glob("*.json"):
             try:
-                with open(archivo, 'r', encoding='utf-8') as f:
+                with open(archivo, "r", encoding="utf-8") as f:
                     self.idiomas[archivo.stem] = json.load(f)
-            except:
-                pass
+            except (OSError, json.JSONDecodeError):
+                continue
+
         if not self.idiomas:
-            print("⚠️  No se pudo leer ningún idioma desde /locales — usando un mínimo de emergencia (es/en).")
+            print("⚠️  No se pudo leer ningún idioma; usando español e inglés.")
             self.idiomas = self.obtener_todos_los_idiomas()
-            self.crear_idiomas_por_defecto(locales_dir)
+            locales_usuario.mkdir(parents=True, exist_ok=True)
+            self.crear_idiomas_por_defecto(locales_usuario)
 
     def crear_idiomas_por_defecto(self, directorio):
         """Crea TODOS los idiomas disponibles al iniciar VJOR por primera vez"""
