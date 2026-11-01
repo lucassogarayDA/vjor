@@ -2070,9 +2070,10 @@ def importar_a_vjor():
         # No aplicar strip(): la indentación inicial es significativa en YAML.
         vjor_content.append(contenido.rstrip("\r\n"))
         
-    elif formato in ["5"]:  # TOML
+    elif formato == "5":  # TOML
         vjor_content.append("[TEXTO]")
-        vjor_content.append(contenido.strip())
+        # Mantener el documento original, incluidos espacios y cadenas multilínea.
+        vjor_content.append(contenido.rstrip("\r\n"))
         
     elif formato in ["6"]:  # INI
         vjor_content.append("[TEXTO]")
