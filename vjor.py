@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# vjor.py - Hybrid Binary Format v3.0.3
+# vjor.py - Hybrid Binary Format v3.0.6
 import json
 import re
 import base64
@@ -15,7 +15,7 @@ import io
 import shutil
 import sysconfig
 
-VERSION = "3.0.4"
+VERSION = "3.0.6"
 
 # ====================
 # DETECCIÓN DE SISTEMA OPERATIVO
