@@ -1788,11 +1788,20 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "csv", csv
 
     elif formato == "yaml":
-        yaml = ""
+        datos_yaml = []
         for nombre, valor in bloques:
-            yaml += f"{nombre.lower()}:\n"
-            for linea in valor.strip().split('\n'):
-                yaml += f"  {linea}\n"
+            try:
+                contenido_yaml = json.loads(valor.strip())
+            except json.JSONDecodeError:
+                contenido_yaml = valor.strip()
+            datos_yaml.append({
+                "bloque": nombre.lower(),
+                "contenido": contenido_yaml
+            })
+
+        # JSON es un subconjunto válido de YAML 1.2 y conserva
+        # tipos, comillas, caracteres especiales y saltos de línea.
+        yaml = json.dumps(datos_yaml, ensure_ascii=False, indent=2)
         return "yaml", yaml
 
     elif formato == "html":
