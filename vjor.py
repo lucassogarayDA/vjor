@@ -1959,6 +1959,10 @@ def importar_a_vjor():
     
     if not formato and formato_detectado:
         formato = formato_detectado
+
+    if formato not in {str(i) for i in range(1, 10)}:
+        error("Formato no válido")
+        return
     
     nombre_destino = input_con_salida("   📄  Nombre del archivo VJOR destino: ")
     if nombre_destino is None:
@@ -2043,6 +2047,21 @@ def importar_a_vjor():
         texto_limpio = re.sub(r'\n\s*\n', '\n\n', texto_limpio)
         vjor_content.append(texto_limpio.strip())
     
+
+    # No sobrescribir un archivo existente por accidente.
+    if os.path.exists(archivo_destino):
+        error("El archivo destino ya existe. Elegí otro nombre para evitar sobrescribirlo.")
+        return
+
+    vjor_content.append("")
+    vjor_content.append("[FIN]")
+    try:
+        with open(archivo_destino, 'w', encoding='utf-8') as f:
+            f.write("\\n".join(vjor_content) + "\\n")
+        exito(f"Archivo importado correctamente: {archivo_destino}")
+    except OSError as e:
+        error(f"No se pudo guardar el archivo: {e}")
+
 
 # ====================
 # FUNCIONES RESTANTES
