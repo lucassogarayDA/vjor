@@ -2075,9 +2075,10 @@ def importar_a_vjor():
         # Mantener el documento original, incluidos espacios y cadenas multilínea.
         vjor_content.append(contenido.rstrip("\r\n"))
         
-    elif formato in ["6"]:  # INI
+    elif formato == "6":  # INI
         vjor_content.append("[TEXTO]")
-        vjor_content.append(contenido.strip())
+        # Conservar secciones, claves, comentarios y espacios del archivo INI.
+        vjor_content.append(contenido.rstrip("\r\n"))
         
     elif formato == "7":  # CSV
         try:
