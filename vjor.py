@@ -1779,15 +1779,15 @@ def generar_exportacion(contenido, nombre_base, formato):
             elemento = ET.SubElement(raiz, nombre.lower())
             elemento.text = valor.strip()
         xml = ET.tostring(raiz, encoding="utf-8", xml_declaration=True).decode("utf-8")
-        return "    elif formato == "csv":
+        return "xml", xml
+
+    elif formato == "csv":
         salida_csv = io.StringIO(newline="")
         escritor = csv.writer(salida_csv)
         escritor.writerow(["BLOQUE", "CONTENIDO"])
         for nombre, valor in bloques:
             escritor.writerow([nombre, valor.strip()])
         return "csv", salida_csv.getvalue()
-
-csv", csv
 
     elif formato == "yaml":
         datos_yaml = []
