@@ -2065,9 +2065,10 @@ def importar_a_vjor():
             error(f"XML inválido: {e}")
             return
 
-    elif formato in ["4"]:  # YAML
+    elif formato == "4":  # YAML
         vjor_content.append("[TEXTO]")
-        vjor_content.append(contenido.strip())
+        # No aplicar strip(): la indentación inicial es significativa en YAML.
+        vjor_content.append(contenido.rstrip("\r\n"))
         
     elif formato in ["5"]:  # TOML
         vjor_content.append("[TEXTO]")
