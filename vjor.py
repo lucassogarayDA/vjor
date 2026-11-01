@@ -1844,25 +1844,23 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "html", documento_html
 
     elif formato == "ini":
-        ini = ""
+        lineas_ini = []
         for nombre, valor in bloques:
-            ini += f"[{nombre}]\n"
             try:
-                datos = json.loads(valor.strip())
-                if isinstance(datos, dict):
-                    for key, val in datos.items():
-                        ini += f"{key} = {val}\n"
-                else:
-                    for linea in valor.strip().split('\n'):
-                        if ':' in linea or '=' in linea:
-                            ini += linea + '\n'
-            except:
-                for linea in valor.strip().split('\n'):
-                    if ':' in linea or '=' in linea:
-                        ini += linea + '\n'
-            ini += "\n"
-        return "ini", ini
+                contenido_ini = json.loads(valor.strip())
+            except json.JSONDecodeError:
+                contenido_ini = valor.strip()
 
+            lineas_ini.append(f"[{nombre.lower()}]")
+            # Se guarda el contenido completo como JSON en una opción.
+            # Así INI conserva listas, diccionarios, tipos y saltos de línea.
+            lineas_ini.append(
+                f"contenido = {json.dumps(contenido_ini, ensure_ascii=False)}"
+            )
+            lineas_ini.append("")
+
+        return "ini", "\n".join(lineas_ini)
+ 
     elif formato == "toml":
         def clave_toml(clave):
             return json.dumps(str(clave), ensure_ascii=False)
