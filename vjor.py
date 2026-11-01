@@ -16,6 +16,7 @@ import io
 import shutil
 import sysconfig
 import xml.etree.ElementTree as ET
+import math
 
 VERSION = "3.0.6"
 
@@ -1854,28 +1855,56 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "ini", ini
 
     elif formato == "toml":
-        toml = ""
+        def clave_toml(clave):
+            return json.dumps(str(clave), ensure_ascii=False)
+
+        def valor_toml(valor):
+            if isinstance(valor, str):
+                return json.dumps(valor, ensure_ascii=False)
+            if isinstance(valor, bool):
+                return "true" if valor else "false"
+            if isinstance(valor, int):
+                return str(valor)
+            if isinstance(valor, float):
+                if not math.isfinite(valor):
+                    raise ValueError("TOML no admite NaN o infinitos en esta exportación")
+                return repr(valor)
+            if isinstance(valor, list):
+                return "[" + ", ".join(valor_toml(item) for item in valor) + "]"
+            if isinstance(valor, dict):
+                pares = (
+                    f"{clave_toml(clave)} = {valor_toml(item)}"
+                    for clave, item in valor.items()
+                )
+                return "{ " + ", ".join(pares) + " }"
+            raise ValueError(f"Tipo no compatible con TOML: {type(valor).__name__}")
+
+        lineas_toml = []
         for nombre, valor in bloques:
-            toml += f"[{nombre.lower()}]\n"
+            lineas_toml.append(f"[{clave_toml(nombre.lower())}]")
             try:
                 datos = json.loads(valor.strip())
-                for key, val in datos.items():
-                    if isinstance(val, str):
-                        toml += f'{key} = "{val}"\n'
-                    elif isinstance(val, (int, float, bool)):
-                        toml += f'{key} = {val}\n'
-                    elif isinstance(val, list):
-                        toml += f'{key} = [{", ".join(str(x) for x in val)}]\n'
-            except:
-                for linea in valor.strip().split('\n'):
-                    if ':' in linea:
-                        partes = linea.split(':', 1)
-                        toml += f'{partes[0].strip()} = "{partes[1].strip()}"\n'
-                    elif '=' in linea:
-                        toml += linea + '\n'
-            toml += "\n"
-        return "toml", toml
+            except json.JSONDecodeError:
+                datos = None
 
+            if isinstance(datos, dict):
+                for key, val in datos.items():
+                    lineas_toml.append(f"{clave_toml(key)} = {valor_toml(val)}")
+            else:
+                for linea in valor.strip().splitlines():
+                    if ":" in linea:
+                        clave, contenido = linea.split(":", 1)
+                        lineas_toml.append(
+                            f"{clave_toml(clave.strip())} = {valor_toml(contenido.strip())}"
+                        )
+                    elif "=" in linea:
+                        clave, contenido = linea.split("=", 1)
+                        lineas_toml.append(
+                            f"{clave_toml(clave.strip())} = {contenido.strip()}"
+                        )
+            lineas_toml.append("")
+
+        return "toml", "\n".join(lineas_toml)
     else:
         raise ValueError(f"Formato de exportación no reconocido: {formato}")
 
