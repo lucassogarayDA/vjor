@@ -2057,7 +2057,7 @@ def importar_a_vjor():
     vjor_content.append("[FIN]")
     try:
         with open(archivo_destino, 'w', encoding='utf-8') as f:
-            f.write("\\n".join(vjor_content) + "\\n")
+            f.write("\n".join(vjor_content) + "\n")
         exito(f"Archivo importado correctamente: {archivo_destino}")
     except OSError as e:
         error(f"No se pudo guardar el archivo: {e}")
