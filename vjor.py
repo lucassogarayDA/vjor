@@ -2050,9 +2050,9 @@ def importar_a_vjor():
         try:
             datos = json.loads(contenido)
             vjor_content.append("[TEXTO]")
-            vjor_content.append(json.dumps(datos, indent=2))
-        except:
-            error("JSON inválido")
+            vjor_content.append(json.dumps(datos, indent=2, ensure_ascii=False))
+        except json.JSONDecodeError as e:
+            error(f"JSON inválido: {e}")
             return
             
     elif formato == "3":  # XML
