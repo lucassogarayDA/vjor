@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # vjor.py - Hybrid Binary Format v3.0.6
 import json
+import html
 import re
 import base64
 import os
@@ -1791,11 +1792,12 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "yaml", yaml
 
     elif formato == "html":
-        html = f"""<!DOCTYPE html>
+        nombre_html = html.escape(str(nombre_base))
+        documento_html = f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{nombre_base}</title>
+    <title>{nombre_html}</title>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }}
         .container {{ max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
@@ -1806,25 +1808,27 @@ def generar_exportacion(contenido, nombre_base, formato):
 </head>
 <body>
     <div class="container">
-        <h1>{nombre_base}</h1>
+        <h1>{nombre_html}</h1>
 """
         for nombre, valor in bloques:
             if nombre == "IMAGEN":
                 match = re.search(r'data:\s*([A-Za-z0-9+/=]+)', valor)
                 if match:
-                    html += f'        <div class="bloque">\n'
-                    html += f'            <div class="bloque-titulo">🖼️ {nombre}</div>\n'
-                    html += f'            <img src="data:image/png;base64,{match.group(1)}" style="max-width:100%"/>\n'
-                    html += f'        </div>\n'
+                    documento_html += f'        <div class="bloque">\n'
+                    documento_html += f'            <div class="bloque-titulo">🖼️ IMAGEN</div>\n'
+                    documento_html += f'            <img src="data:image/png;base64,{match.group(1)}" style="max-width:100%"/>\n'
+                    documento_html += f'        </div>\n'
             else:
-                html += f'        <div class="bloque">\n'
-                html += f'            <div class="bloque-titulo">📦 {nombre}</div>\n'
-                html += f'            <div class="bloque-contenido">{valor.strip()}</div>\n'
-                html += f'        </div>\n'
-        html += f"""    </div>
+                nombre_bloque_html = html.escape(str(nombre))
+                contenido_html = html.escape(valor.strip())
+                documento_html += f'        <div class="bloque">\n'
+                documento_html += f'            <div class="bloque-titulo">📦 {nombre_bloque_html}</div>\n'
+                documento_html += f'            <div class="bloque-contenido">{contenido_html}</div>\n'
+                documento_html += f'        </div>\n'
+        documento_html += f"""    </div>
 </body>
 </html>"""
-        return "html", html
+        return "html", documento_html
 
     elif formato == "ini":
         ini = ""
