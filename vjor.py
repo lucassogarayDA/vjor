@@ -15,6 +15,7 @@ import gzip
 import io
 import shutil
 import sysconfig
+import xml.etree.ElementTree as ET
 
 VERSION = "3.0.6"
 
@@ -1771,13 +1772,11 @@ def generar_exportacion(contenido, nombre_base, formato):
         return "md", md
 
     elif formato == "xml":
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n<vjor>\n'
+        raiz = ET.Element("vjor")
         for nombre, valor in bloques:
-            xml += f'  <{nombre.lower()}>\n'
-            valor_escapado = valor.strip().replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            xml += f'    <![CDATA[{valor_escapado}]]>\n'
-            xml += f'  </{nombre.lower()}>\n'
-        xml += "</vjor>"
+            elemento = ET.SubElement(raiz, nombre.lower())
+            elemento.text = valor.strip()
+        xml = ET.tostring(raiz, encoding="utf-8", xml_declaration=True).decode("utf-8")
         return "xml", xml
 
     elif formato == "csv":
