@@ -2056,11 +2056,15 @@ def importar_a_vjor():
             return
             
     elif formato == "3":  # XML
-        vjor_content.append("[TEXTO]")
-        texto_limpio = re.sub(r'<[^>]+>', '', contenido)
-        texto_limpio = re.sub(r'\n\s*\n', '\n\n', texto_limpio)
-        vjor_content.append(texto_limpio.strip())
-        
+        try:
+            raiz_xml = ET.fromstring(contenido)
+            texto_xml = ET.tostring(raiz_xml, encoding="unicode")
+            vjor_content.append("[TEXTO]")
+            vjor_content.append(texto_xml)
+        except ET.ParseError as e:
+            error(f"XML inválido: {e}")
+            return
+
     elif formato in ["4"]:  # YAML
         vjor_content.append("[TEXTO]")
         vjor_content.append(contenido.strip())
